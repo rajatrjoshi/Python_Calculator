@@ -1,10 +1,11 @@
+import tkinter
 from tkinter import *
 import parser 
 from math import factorial
 
-root = Tk()
-root.title('Python_Calculator')
-root.mainloop()
+root = tkinter.Tk()
+root.title("Python_Calculator")
+root.resizable(0,0)
 
 #adding the input field
 display = Entry(root)
@@ -53,3 +54,60 @@ Button(root , text = "x!" , command = lambda : fact()).grid(row = 3 , column = 5
 Button(root , text = ")" , command = lambda : get_operation(")")).grid(row = 4 , column = 5, sticky = N+S+E+W)
 Button(root , text = "^2" , command = lambda : get_operation("**2")).grid(row = 5 , column = 5, sticky = N+S+E+W)
 Button(root , text = "=" , command = lambda : calculate()).grid(row= 6, columnspan = 6, sticky = N+S+E+W)
+
+# i keeps the track of current position on the input text field 
+i=0 
+
+# Recieves the digit as parameter and display it on the input filed
+def get_variables(num):
+    global i
+    display.insert(i, num)
+    i += 1
+
+
+# Mapping the oprator buttons
+def get_operation(operator):
+    global i 
+    length = len(operator)
+    display.insert(i, operator)
+    i += length
+
+# Mapping the AC button
+def clear_all():
+    display.delete(0, END)
+
+# Mapping the undo button 
+def undo():
+    entire_string = display.get()
+    if len(entire_string):
+        new_string = entire_string[:-1]
+        clear_all()
+        display.insert(0, new_string)
+    else:
+        clear_all()
+        display.insert(0, "ERROR")
+
+# Mapping the "=" button
+def calculate():
+    entire_string= display.get()
+    try:
+        a = parser.expr(entire_string).compile()
+        result = eval(a)
+        clear_all()
+        display.insert(0, result)
+    except Exception:
+        clear_all()
+        display.insert(0, "Error")
+
+# Mapping the factorial key
+def fact():
+    entire_string = display,get()
+    try:
+        result = factorial(int(entire_string))
+        clear_all()
+        display.insert(0, result)
+    except Exception:
+        clear_all()
+        display.insert(0, "Error")
+
+root.mainloop()
